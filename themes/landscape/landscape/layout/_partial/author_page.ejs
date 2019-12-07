@@ -1,0 +1,127 @@
+<!-- INDEX PAGE -->
+<article id="author_page" itemscope itemprop="blogPost" style="padding-top:78px;">
+  <!-- class="article article-type -->
+  <div class="article-inner" style="box-shadow: 2px 3px 3px 3px #8DB98A;">
+    <header class="article-body" style="margin-bottom:5px;">
+      <div class="container-fluid" style="min-width:100%;">
+        <div class="row">
+          <div class="col-12">
+            <div class="d-none d-lg-block">
+              <a href="https://smoke.io/@<%- post.title %>">
+                <% try { var profile_image = post.profile_image; } catch (err) { var profile_image = "/css/images/smoke_user.png"; } %>
+                <% if ( typeof(profile_image) !== "undefined" && profile_image !== null ) { %>
+                  <% if ((!profile_image.includes("steemitimages.com")) && (profile_image !== "/css/images/smoke_user.png")) { %>
+                    <img style="max-height: 125px; max-width: 125px; padding-top:8px; float:left;" class="lozad" src="//images.weserv.nl/?url=<%- profile_image %>&w=1&h=1&output=webp" data-src="//images.weserv.nl/?url=<%- profile_image %>&w=125&output=webp" alt="<%- post.title %>'s profile image'" />
+                  <% } else { %>
+                    <img style="max-height: 125px; max-width: 125px; padding-top:8px; float:left;" src="https://smoke-indica.com/css/images/smoke_user.webp" alt="<%- post.title %>'s profile image'" />
+                  <% } %>
+                <% } %>
+              </a>
+            </div>
+            <% var author_str = (((post.title).slice(0, 1)).toUpperCase() + (post.title).slice(1, ((post.title).length))); %>
+            <% if (author_str.length < 5) { author_str = author_str.toUpperCase(); } %>
+            <h1 style="font-size: 40px;">@<a href="https://smoke.io/@<%= post.title %>" style="color:green;"><%= author_str %></a> - <%- post.about_author %></h1>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="article-entry" itemprop="articleBody">
+      <div class="container-fluid" style="min-width:100%;">
+        <div class="row" style="min-width:100%;">
+
+            <% try { var cover_image = post.cover_image; } catch (err) { var cover_image = "blank"; } %>
+            <% if ( typeof(cover_image) !== "undefined" && cover_image !== null ) { %>
+              <% if ((cover_image !== "blank") && (!cover_image.includes("steemitimages.com"))) { %>
+                <div class="col-12 text-center" style="max-height:150px; overflow:hidden;">
+                  <img style="padding:5px;width:100%;" src="//images.weserv.nl/?url=<%- cover_image %>&h=150&output=webp" alt="<%- post.title %>'s profile image'" />
+                </div>
+              <% } %>
+            <% } %>
+          <div class="col-12">
+            <h3>Reputation: <b><%- post.reputation %></b>, Posts: <b><%- post.post_count %></b>, Witness votes: <b><%- post.witness_votes %></b></h3>
+
+            <h4>Tags:
+              <%
+                var processed_tags = [];
+                var latest_posts = site.posts.reverse();
+                latest_posts.forEach(item => {
+                  if (item.author == post.title) {
+                    var tag_list = "";
+
+                    if (item.tags && item.tags.length) {
+                      var tag_quantity = item.tags.length;
+                      for (var j = 0; (j < tag_quantity); j++) {
+
+                        var current_tag = ((item.tags.data)[j]).name;
+
+                        if (!processed_tags.includes(current_tag)) {
+                          processed_tags.push(current_tag);
+                          %>
+
+                          <a href="/tags/<%= current_tag %>/" style="color:#6c757d;">#<%= current_tag %></a>
+
+                          <%
+                          }
+                        }
+                     }
+                   }
+                });
+             %>
+             </h4>
+          </div>
+        </div>
+
+        <div class="row" style="min-width:100%;">
+          <div class="col-xs-12 col-md-12 col-lg-6 col-xl-6">
+            <h2>Check out <%- post.title %>'s featured posts</h2>
+            <ul>
+              <%
+                latest_posts.forEach(item => {
+                  if (item.author == post.title) {
+              %>
+                    <li>
+                      <a class="article-more-link" style="color: green;" href="<%- item.permalink %>"><%- item.title %></a>
+                    </li>
+              <%
+                  }
+                });
+              %>
+            </ul>
+          </div>
+          <div class="col-xs-12 col-md-12 col-lg-6 col-xl-6">
+            <h2><%- post.title %>'s image wall</h2>
+            <div class="row">
+              <%
+                var non_duplicate_images = [];
+                latest_posts.forEach(item => {
+                  if ((item.author == post.title) && ((item.images).length > 0)) {
+                    var non_steemit_images = []; // Where we'll store images to pick from
+                    for (j = 0; j < ((item.images).length); j++) {
+                      if (((item.images)[j].includes('steemitimages')) || (non_duplicate_images.includes((item.images)[j]))) {
+                        continue;
+                      } else {
+                        non_steemit_images.push((item.images)[j]);
+                        non_duplicate_images.push((item.images)[j]);
+                      }
+                    }
+
+                    var picked_image = non_steemit_images[Math.floor(Math.random()*non_steemit_images.length)];
+                    %>
+                    <div class="col-xs-6 col-sm-6 col-lg-4">
+                      <a href="<%- item.permalink %>">
+                        <img src="<%- picked_image %>" alt="<%- item.title %>" title="<%- item.title %>" style="width:auto !important;width:100%;max-width:100%;float:left;clear:both;padding:5px;" />
+                      </a>
+                    </div>
+              <%
+                  }
+                });
+              %>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</article>

@@ -1,0 +1,163 @@
+<!-- INDEX PAGE -->
+<article id="<%= post.layout %>-<%= post.slug %>" class="article article-type-<%= post.layout %>" itemscope itemprop="blogPost">
+  <div class="article-inner" style="box-shadow: 2px 3px 3px 3px #8DB98A;">
+    <% if ((post.hasOwnProperty('images')) && ((post.images).length > 0) && (!((post.images)[0]).includes("steemitimages.com"))) { %>
+      <div class="article-entry" style="max-width:100%;">
+        <div class="row" style="padding-top:17px;">
+          <div class="col-12 d-block d-sm-none">
+            <!--XS-->
+            <a href="<%- url_for(post.path) %>" style="color:green;">
+              <img src="//images.weserv.nl/?url=<%- (post.images)[0] %>&w=576&output=webp" alt="<%= post.title %>" title="<%= post.title %>" />
+            </a>
+          </div>
+          <div class="col-12 d-none d-sm-block d-md-none">
+            <!--SM-->
+            <a href="<%- url_for(post.path) %>" style="color:green;">
+              <img src="//images.weserv.nl/?url=<%- (post.images)[0] %>&w=992&output=webp" alt="<%= post.title %>" title="<%= post.title %>" />
+            </a>
+          </div>
+          <div class="col-12 d-none d-md-block d-lg-none">
+            <!--MD-->
+            <a href="<%- url_for(post.path) %>" style="color:green;">
+              <img src="//images.weserv.nl/?url=<%- (post.images)[0] %>&w=1083&output=webp" alt="<%= post.title %>" title="<%= post.title %>" />
+            </a>
+          </div>
+          <div class="col-12 d-none d-lg-block d-xl-none">
+            <!--LG-->
+            <a href="<%- url_for(post.path) %>" style="color:green;">
+              <img src="//images.weserv.nl/?url=<%- (post.images)[0] %>&w=1083&output=webp" alt="<%= post.title %>" title="<%= post.title %>" />
+            </a>
+          </div>
+          <div class="col-12 d-none d-xl-block">
+            <!--XL-->
+            <a href="<%- url_for(post.path) %>" style="color:green;">
+              <img src="//images.weserv.nl/?url=<%- (post.images)[0] %>&w=1440&output=webp" alt="<%= post.title %>" title="<%= post.title %>" />
+            </a>
+          </div>
+        </div>
+      </div>
+    <% } %>
+
+    <%
+      const wordsPerMinute = 200;
+      let read_result;
+      let textLength = post.content.split(" ").length; // Split by words
+      if (textLength > 0) {
+        let value = Math.ceil(textLength / wordsPerMinute);
+        read_result = `${value} min read.`;
+      }
+    %>
+
+    <% if ((post.link || post.title) && (post.author)) { %>
+      <header class="article-body" style="margin-bottom:5px;">
+        <div class="container-fluid" style="min-width:100%;">
+          <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding-top:5px;">
+              <h2 style="font-size: 28px;">
+                <a href="<%- url_for(post.path) %>" style="color:green;">
+                  <b><%= post.title %></b>
+                </a>
+              </h2>
+
+              <%
+                var date_diff_indays = function(post_date) {
+                  dt2 = new Date();
+                  dt1 = new Date(post_date);
+                  return Math.floor((Date.UTC(dt2.getFullYear(), dt2.getMonth(), dt2.getDate()) - Date.UTC(dt1.getFullYear(), dt1.getMonth(), dt1.getDate()) ) /(1000 * 60 * 60 * 24));
+                }
+              %>
+
+              <h3 style="font-size: 18px;">
+                By @<a href="/<%= post.author %>.html" style="color:green;"><%= post.author %></a> on <time datetime="<%= date_xml(post.date) %>" itemprop="datePublished"><%= date(post.date, null) %></time> ⏱ <%- read_result %>
+              </h3>
+
+              <%
+                var total_payout_value = parseInt((post.total_payout_value).replace(" SMOKE", ""));
+                var pending_payout_value = parseInt((post.pending_payout_value).replace(" SMOKE", ""));
+                var total_vote_value = total_payout_value + pending_payout_value;
+              %>
+
+              <h3 style="font-size: 18px;">Tags:
+              <% var tag_str = ""; %>
+              <% if (post.tags && post.tags.length) { %>
+                <% var tag_quantity = post.tags.length; %>
+                <% for (var j = 0; (j < tag_quantity); j++) { %>
+                  <% var current_tag = ((post.tags.data)[j]).name; %>
+                  <% tag_str += ("#" + current_tag + " "); %>
+                  <a href="/tags/<%= current_tag %>/"><%= current_tag %></a>
+                  <% if (j < (tag_quantity - 1)) { %>
+                    ,
+                  <% } %>
+                <% } %>
+              <% } %>
+              </h3>
+
+              <h3 style="font-size: 18px;"><%= post.net_votes %> users rewarded @<a href="/<%= post.author %>.html" style="color:green;"><%= post.author %></a> <%= total_vote_value %> <a href="/price">Smoke</a> for this post.</h3>
+
+            </div>
+
+            <div class="d-none d-lg-block text-center">
+              <a href="/<%- post.author %>.html">
+                <% try { var profile_image = custom_field('pages', post.author, 'profile_image'); } catch (err) { var profile_image = "/css/images/smoke_user.png"; } %>
+                <% if ( typeof(profile_image) !== "undefined" && profile_image !== null ) { %>
+                  <% if ((!profile_image.includes("steemitimages.com")) && (profile_image !== "/css/images/smoke_user.png")) { %>
+                    <img style="max-height: 125px; max-width: 125px; padding-top:8px;" src="//images.weserv.nl/?url=<%- profile_image %>&w=125&output=webp" alt="<%- post.author %>'s profile image'" title="<%- post.author %>'s profile image'" />
+                  <% } else { %>
+                    <img style="max-height: 125px; max-width: 125px; padding-top:8px;" src="https://smoke-indica.com/css/images/smoke_user.webp" alt="<%- post.author %>'s profile image'" title="<%- post.author %>'s profile image'" />
+                  <% } %>
+                <% } %>
+              </a>
+            </div>
+
+            <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10" style="padding-top:5px;">
+              <% var author_str = (((post.author).slice(0, 1)).toUpperCase() + (post.author).slice(1, ((post.author).length))); %>
+              <% if (author_str.length < 5) { author_str = author_str.toUpperCase(); } %>
+
+              <% try { var about_author = custom_field('pages', post.author, 'about_author'); } catch (err) { var about_author = "a smoke user"; } %>
+              <% try { var reputation = custom_field('pages', post.author, 'reputation'); } catch (err) { var reputation = "?"; } %>
+              <% try { var post_count = custom_field('pages', post.author, 'post_count'); } catch (err) { var post_count = "?"; } %>
+              <% try { var witness_votes = custom_field('pages', post.author, 'witness_votes'); } catch (err) { var witness_votes = "?"; } %>
+              <!--<h3>By @<a href="/<%= post.author %>.html" style="color:green;"><%= author_str %></a></h3>-->
+
+              <!--
+              <% if (parseInt((post.total_payout_value).replace(" SMOKE", "")) > 0) { %>
+                <h4 style="font-size: 17px;"><%= post.net_votes %> <a href="https://smoke.io" style="color:green;">Smoke</a> users rewarded @<a href="/<%= post.author %>.html" style="color:green;"><%= author_str %></a> <%= post.total_payout_value %> for the above post</h4>
+              <% } else { %>
+                <h4 style="font-size: 17px;"><%= post.net_votes %> <a href="https://smoke.io" style="color:green;">Smoke</a> users rewarded @<a href="/<%= post.author %>.html" style="color:green;"><%= author_str %></a> <%= post.pending_payout_value %> for the above post</h4>
+              <% } %>
+              -->
+              <h4 style="font-size: 17px;">About <%- author_str %>: <span style="color:grey;"><%- about_author %></span></h4>
+              <h4 style="font-size: 17px;">Reputation: <span style="color:grey;"><%- reputation %></span> Posts: <span style="color:grey;"><%- post_count %></span></h4>
+
+              <br/>
+              <% var tag_str = ""; %>
+              <% if (post.tags && post.tags.length) { %>
+                <% var tag_quantity = post.tags.length; %>
+                <% for (var j = 0; (j < tag_quantity); j++) { %>
+                  <% var current_tag = ((post.tags.data)[j]).name; %>
+                  <% tag_str += (current_tag + ","); %>
+                <% } %>
+              <% } %>
+              <% var replaced_title = (((post.title).replace(/&/g, "and")).replace(/#/g, "")); %>
+              <button type="button" class="btn btn-outline-success btn-sm" style="text-align:center; margin:2px; float:left;">
+                  <a href="https://twitter.com/intent/tweet?url=<%- post.permalink %>&text=<%- replaced_title %> - <%- post.author %>&hashtags=<%- tag_str %>" style="object-fit: cover; color:green; overflow: hidden; text-align:center; padding-top:5px;">Twitter</a>
+              </button>
+
+              <button type="button" class="btn btn-outline-success btn-sm" style="text-align:center; margin:2px; float:left;">
+                  <a href="http://reddit.com/submit?url=<%- post.permalink %>&title=<%- replaced_title %> - <%- post.author %> - <%- tag_str %>" style="object-fit: cover; color:green; overflow: hidden; text-align:center; padding-top:5px;">Reddit</a>
+              </button>
+
+              <button type="button" class="btn btn-outline-success btn-sm" style="text-align:center; margin:2px; float:left;">
+                  <a href="https://www.tumblr.com/widgets/share/tool?canonicalUrl=<%- post.permalink %>&title=<%- replaced_title %> by <%- post.author %>&caption=<%- tag_str %>" style="object-fit: cover; color:green; overflow: hidden; text-align:center; padding-top:5px;">Tumbler</a>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+    <% } %>
+  </div>
+
+  <% if (!index){ %>
+    <%- partial('post/nav') %>
+  <% } %>
+</article>

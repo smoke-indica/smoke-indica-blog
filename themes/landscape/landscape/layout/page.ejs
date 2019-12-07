@@ -1,0 +1,7 @@
+<% if (page.hasOwnProperty('about_author')) { %>
+  <%- partial('_partial/author_page', {post: page, index: false}) %>
+<% } else if (page.hasOwnProperty('price_page')) { %>
+  <%- partial('_partial/price_page', {}) %>
+<% } else { %>
+  <%- partial('_partial/article_page', {post: page, index: false}) %>
+<% } %>

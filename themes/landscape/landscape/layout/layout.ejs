@@ -1,0 +1,176 @@
+<%- partial('_partial/head') %>
+  <body>
+    <div class="outer">
+      <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="/">
+          <img src="/css/images/smoke-grey.png" title="<%- theme.subtitle %>" alt="smoke grey logo" style="float:left;"/>
+          <h1 id="logo-wrap" title="<%- theme.subtitle %>" style="float:right;padding:8px;">Smoke Indica</h1>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav" style="padding-right:35px;">
+            <% for (var i in theme.menu){ %>
+              <a class="nav-link" href="<%- url_for(theme.menu[i]) %>" style="color:white; font-weight:bold;"><%= i %></a>
+            <% } %>
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <b style="color:White;">Follow</b>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item"  href="https://twitter.com/Smoke_Indica">🐦 Twitter</a>
+                <a class="dropdown-item" href="https://mix.com/indica">🌎 Mix</a>
+                <a class="dropdown-item" href="https://www.tumblr.com/blog/smoke-indica">📌 Tumblr</a>
+                <% if (theme.rss){ %>
+                  <a class="dropdown-item" href="<%- url_for(theme.rss) %>">📺 RSS</a>
+                <% } %>
+              </div>
+            </li>
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <b style="color:White;">Smoke Token</b>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="/price">Current Price</a>
+                <div class="dropdown-divider"></div>
+                <h6 class="dropdown-header">Rudex.Smoke</h6>
+                <a class="dropdown-item"href="https://bitsharescan.com/asset/RUDEX.SMOKE">Bitsharescan</a>
+                <a class="dropdown-item"href="https://open-explorer.io/#!/assets/RUDEX.SMOKE">Open-Explorer</a>
+                <a class="dropdown-item"href="https://bitshares-explorer.io/#/assets/RUDEX.SMOKE">Bitshares-Explorer</a>
+                <a class="dropdown-item"href="https://bts.ai/a/RUDEX.SMOKE">BTS.ai</a>
+                <a class="dropdown-item"href="https://cryptofresh.com/a/RUDEX.SMOKE">Cryptofresh</a>
+                <a class="dropdown-item"href="https://wallet.bitshares.org/#/asset/RUDEX.SMOKE">Bitshares wallet</a>
+                <a class="dropdown-item"href="https://market.rudex.org/#/asset/RUDEX.SMOKE">Rudex wallet</a>
+                <div class="dropdown-divider"></div>
+                <h6 class="dropdown-header">Smoke</h6>
+                <a class="dropdown-item"  href="https://bitsharescan.com/asset/SMOKE">Bitsharescan</a>
+                <a class="dropdown-item"  href="https://open-explorer.io/#!/assets/SMOKE">Open-Explorer</a>
+                <a class="dropdown-item"  href="https://bitshares-explorer.io/#/assets/SMOKE">Bitshares-Explorer</a>
+                <a class="dropdown-item"  href="https://bts.ai/a/SMOKE">BTS.ai</a>
+                <a class="dropdown-item"  href="https://cryptofresh.com/a/SMOKE">Cryptofresh</a>
+                <a class="dropdown-item"  href="https://wallet.bitshares.org/#/asset/SMOKE">Bitshares wallet</a>
+              </div>
+            </li>
+
+            <%
+              var authors = {};
+              site.posts.forEach(item => {
+                if (item.author in authors) {
+                  // Iterate
+                  authors[item.author] += 1;
+                } else {
+                  // Init
+                  authors[item.author] = 1;
+                }
+              });
+
+              const medals = {'1': "🥇", '2': "🥈", '3': "🥉"};
+              var sorted_authors = Object.keys(authors).sort(function(a,b){return authors[b]-authors[a]});
+              var top_user_count = 10;
+            %>
+            <% if (sorted_authors.length > 10) { %>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <b style="color:White;">Top Users</b>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <% for (i = 0; i < top_user_count; i++) { %>
+                    <% var item=sorted_authors[i]; %>
+                    <% var author_str = (((item).slice(0, 1)).toUpperCase() + (item).slice(1, ((item).length))); %>
+                    <a class="dropdown-item" href="/<%- item %>.html">@<span style=""><%= author_str %></span></a>
+                  <% } %>
+                </div>
+              </li>
+            <% } %>
+
+              <%
+                var tags = {};
+                var itr = 0;
+                site.posts.forEach(item => {
+                  if (itr < 150) {
+                    // Limited the last post lookup to the last 50 posts
+                    itr += 1;
+                    if (item.hasOwnProperty("tags")) {
+                      // The post has tags (skip broken posts)
+                      item.tags.data.forEach(tag => {
+                        // Iterate over each of the post's tags
+                        if (tag.name in tags) {
+                          // Iterate the tag in the tags obj
+                          tags[tag.name] += 1;
+                        } else {
+                          // Initialise the tag in the tags obj
+                          tags[tag.name] = 1;
+                        }
+                      })
+                    }
+                  }
+                });
+
+                sorted_tags = Object.keys(tags).sort(function(a,b){return tags[b]-tags[a]})
+              %>
+              <% const final_number = 15; %>
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <b style="color:White;">Top Tags</b>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <% for (i = 0; i < final_number; i++) {  var current_item=sorted_tags[i]; %>
+                  <a class="dropdown-item" href="/tags/<%- current_item %>/"><span style="font-size:18px;"><%= current_item %></span></a>
+                <% }; %>
+              </div>
+            </li>
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <b style="color:White;">Related sites</b>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="https://smoke.io">Smoke.io</a>
+                <a class="dropdown-item" href="https://ukcsc.co.uk/">UKCSC</a>
+                <a class="dropdown-item" href="https://www.upalliance.org/">UPA</a>
+                <a class="dropdown-item" href="https://www.clear-uk.org/">Clear-UK</a>
+                <a class="dropdown-item" href="https://endourpain.org/">EndOurPain</a>
+                <a class="dropdown-item" href="https://norml.org/act">NORML</a>
+                <a class="dropdown-item" href="https://daggacouple.co.za/">daggacouple</a>
+                <a class="dropdown-item" href="https://www.cannabisculture.com/">Cannabis Culture</a>
+                <a class="dropdown-item" href="https://reddit.com/r/trees">/r/trees</a>
+                <a class="dropdown-item" href="https://reddit.com/r/uktrees">/r/uktrees</a>
+                <a class="dropdown-item" href="https://reddit.com/r/vaporents">/r/vaporents</a>
+                <a class="dropdown-item" href="https://ismokemag.co.uk/">ismoke</a>
+                <a class="dropdown-item" href="https://www.leafly.com">Leafly</a>
+                <a class="dropdown-item" href="https://weedmaps.com/">Weedmaps</a>
+                <a class="dropdown-item" href="https://hightimes.com/">HighTimes</a>
+                <a class="dropdown-item" href="https://merryjane.com/">Merry Jane</a>
+              </div>
+            </li>
+          </ul>
+          <script async src="https://cse.google.com/cse.js?cx=011192936557388644045:lsfkywxkq7y"></script>
+          <div class="gcse-search"></div>
+        </div>
+      </nav>
+
+      <section id="main" style="border-top: 1px dotted green;"><%- body %></section>
+      <% if (theme.sidebar && theme.sidebar !== 'bottom'){ %>
+        <%- partial('_partial/sidebar', null, {cache: !config.relative_link}) %>
+      <% } %>
+    </div>
+    <%- partial('_partial/after-footer') %>
+
+    <script type="application/javascript" src="https://sdk.truepush.com/sdk/v2/app.js"></script>
+    <script>
+    var truepush = window.truepush || [];
+    truepush.push(function(){
+        truepush.Init({
+            id: "5d627df9c5dc797140fac4f1"
+            },
+            function(error){
+              if(error) console.log(error);
+            })
+        })
+    </script>
+  </body>
+</html>

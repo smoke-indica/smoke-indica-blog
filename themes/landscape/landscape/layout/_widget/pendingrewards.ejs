@@ -1,0 +1,39 @@
+<div class="container-fluid" style="min-width:100%;">
+  <div class="row">
+    <div class="d-none d-lg-block widget-wrap">
+      <div class="widget-wrap">
+        <h3 class="widget-title">Highest pending rewards</h3>
+        <div class="widget" style="box-shadow: 2px 3px 3px 3px #8DB98A;">
+          <%
+            var posts = [];
+            site.posts.forEach(item => {
+              if (item.hasOwnProperty("pending_payout_value")) {
+                if (item.pending_payout_value !== "0.000 SMOKE") {
+                  posts.push(item);
+                }
+              }
+            });
+
+            // sorting the mapped array containing the reduced values
+            posts.sort(function(a, b) {
+              if ((parseInt((a.pending_payout_value).replace(" SMOKE",""))) < (parseInt((b.pending_payout_value).replace(" SMOKE","")))) {
+                return 1;
+              }
+              if ((parseInt((a.pending_payout_value).replace(" SMOKE",""))) > (parseInt((b.pending_payout_value).replace(" SMOKE","")))) {
+                return -1;
+              }
+              return 0;
+            });
+          %>
+          <ul>
+            <% for (i = 0; i < 10; i++) {  var item=posts[i]; %>
+              <li>
+                <a href="<%- config.root %><%- item.path %>" class="navlink"><%- item.title %></a>
+              </li>
+            <% }; %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

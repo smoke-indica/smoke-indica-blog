@@ -1,0 +1,112 @@
+<div class="widget-wrap">
+  <h3 class="widget-title">Most rewarded authors</h3>
+  <div class="widget" style="box-shadow: 2px 3px 3px 3px #8DB98A;">
+    <%
+      var authors = {};
+      site.posts.forEach(item => {
+
+        /*
+          total_payout_value: 480.043 SMOKE
+          pending_payout_value: 0.000 SMOKE
+        */
+        var pending_payout_value = 0;
+        var total_payout_value = 0;
+        var sum_payout = 0;
+        if ((item.hasOwnProperty('pending_payout_value')) && (item.hasOwnProperty('total_payout_value'))) {
+          total_payout_value = parseInt((item.total_payout_value).replace(" SMOKE", ""));
+          pending_payout_value = parseInt((item.pending_payout_value).replace(" SMOKE", ""));
+          sum_payout = total_payout_value + pending_payout_value;
+        }
+
+        if (item.author in authors) {
+          // Iterate
+          authors[item.author] += sum_payout;
+        } else {
+          // Init
+          authors[item.author] = sum_payout;
+        }
+      });
+
+      const medals = {'1': "🥇", '2': "🥈", '3': "🥉"};
+      var sorted_authors = Object.keys(authors).sort(function(a,b){return authors[b]-authors[a]});
+      var top_user_count = 70;
+      var user_tabs = top_user_count/10;
+    %>
+    <% if (sorted_authors.length > 10) { %>
+      <div id="myTab" class="tab-content">
+        <% for (u = 0; u < user_tabs; u++) { %>
+          <% if (u == 0) { %>
+            <div id="reward<%- u %>">
+          <% } else { %>
+            <div id="reward<%- u %>" style="display:none;">
+          <% } %>
+              <ul>
+                <% for (i = 0; i < 10; i++) { var item=sorted_authors[u*10 + i]; %>
+                  <li style="font-size:14px;">
+                    <% if ((u == 0) && (i + 1 < 4)) { %>
+                      <%- medals[(i + 1).toString()]; %>
+                    <% } else { %>
+                      <%- (u*10 + i) + 1 %>
+                    <% } %>
+                    <% var author_str = (((item).slice(0, 1)).toUpperCase() + (item).slice(1, ((item).length))); %>
+                    <a href="/<%- item %>.html" class="navlink">@<span style="font-size:17px;"><%= author_str %></span></a><div class="d-none d-lg-block d-print-block float-right"> <%- authors[item] %> SMOKE</div>
+                  </li>
+                <% } %>
+              </ul>
+            </div>
+        <% } %>
+      </div>
+      <br/>
+      <button type="button" class="btn btn-outline-secondary" id="more_top_rewards">show more featured users</button>
+    </div>
+  <% } %>
+  </div>
+
+  <div class="widget-wrap">
+  <h3 class="widget-title">Most frequently resmoked</h3>
+  <div class="widget" style="box-shadow: 2px 3px 3px 3px #8DB98A;">
+    <%
+      var authors = {};
+      site.posts.forEach(item => {
+        if (item.author in authors) {
+          // Iterate
+          authors[item.author] += 1;
+        } else {
+          // Init
+          authors[item.author] = 1;
+        }
+      });
+
+      var sorted_authors = Object.keys(authors).sort(function(a,b){return authors[b]-authors[a]});
+      var top_user_count = 70;
+      var user_tabs = top_user_count/10;
+    %>
+    <% if (sorted_authors.length > 10) { %>
+      <div id="myTab" class="tab-content">
+        <% for (u = 0; u < user_tabs; u++) { %>
+          <% if (u == 0) { %>
+            <div id="user<%- u %>">
+          <% } else { %>
+            <div id="user<%- u %>" style="display:none;">
+          <% } %>
+              <ul>
+                <% for (i = 0; i < 10; i++) { var item=sorted_authors[u*10 + i]; %>
+                  <li style="font-size:14px;">
+                    <% if ((u == 0) && (i + 1 < 4)) { %>
+                      <%- medals[(i + 1).toString()]; %>
+                    <% } else { %>
+                      <%- (u*10 + i) + 1 %>
+                    <% } %>
+                    <% var author_str = (((item).slice(0, 1)).toUpperCase() + (item).slice(1, ((item).length))); %>
+                    <a href="/<%- item %>.html" class="navlink">@<span style="font-size:17px;"><%= author_str %></span></a><div class="d-none d-lg-block d-print-block float-right"> <%- authors[item] %> posts</div>
+                  </li>
+                <% } %>
+              </ul>
+            </div>
+        <% } %>
+      </div>
+      <br/>
+      <button type="button" class="btn btn-outline-secondary" id="more_top_users">show more featured users</button>
+    </div>
+  <% } %>
+</div>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="https://smoke-indica.com/json/manifest.json" rel="manifest">
+  <%- partial('google-analytics') %>
+  <meta name="yandex-verification" content="e6468bcbf2aa26f3" />
+  <meta name="msvalidate.01" content="ED496F2FB33427E50601BFEFD9132E2F" />
+  <%
+    var title = page.title;
+
+    if (is_archive()) {
+      title = __('archive_a');
+
+      if (is_month()) {
+        title += ': ' + page.year + '/' + page.month;
+      } else if (is_year()){
+        title += ': ' + page.year;
+      }
+    } else if (is_category()) {
+      title = __('category') + ': ' + page.category;
+    } else if (is_tag()) {
+      title = __('tag') + ': ' + page.tag;
+    }
+  %>
+
+  <% if (page.hasOwnProperty('about_author')) { %>
+    <!-- Author profile page! -->
+    <title><%- page.title %>'s profile page on Smoke-Indica.com</title>
+    <%
+      var processed_tags = [];
+      site.posts.forEach(item => {
+        if (item.author == page.title) {
+
+          if (item.tags && item.tags.length) {
+            var tag_quantity = item.tags.length;
+            for (var j = 0; (j < tag_quantity); j++) {
+              var current_tag = ((item.tags.data)[j]).name;
+
+              if (!processed_tags.includes(current_tag)) {
+                processed_tags.push(current_tag);
+              }
+            }
+          }
+        }
+      });
+     %>
+    <meta name="description" content="<%- page.title %>'s profile page. <%- page.about_author %>. Posts about: <%- processed_tags.join(", ") %>">
+    <link rel="author" href="https://smoke.io/@<%- page.title %>"/>
+    <meta name="keywords" content="<%- processed_tags.join(", ") %>"/>
+
+    <meta property="og:title" content="<%- page.title %>'s profile page. <%- page.about_author %>. Posts about: <%- processed_tags.join(", ") %>"/>
+    <meta property="og:type" content="profile" />
+    <meta property="og:url" content="https://smoke-indica.com/<%- page.title %>.html" />
+    <% try { var profile_image = post.profile_image; } catch (err) { var profile_image = "https://smoke-indica.com/css/images/smoke_user.png"; } %>
+    <meta property="og:image" content="<%- profile_image %>" />
+    <meta property="og:description" content="<%- page.title %>'s profile page. <%- page.about_author %>. Posts about: <%- processed_tags.join(", ") %>">
+    <meta property="og:locale" content="en_US" />
+  <% } else if (page.hasOwnProperty('price_page')) { %>
+    <!-- Price of Smoke page! -->
+    <title>Smoke Indica - Current price of SMOKE on Bitshares Decentralized Exchanges</title>
+    <meta name="description" content="Check the current price of SMOKE on the Bitshares Decentralized Exchange in multiple currencies.">
+    <meta name="keywords" content="price,marketcap,value,valuation,cryptocurrency,smoke,smokeio,rudex,bitshares,dex,usd,bts,bitsharescan,openexplorer"/>
+  <% } else if (page.hasOwnProperty('net_votes')) { %>
+    <!-- Article/Post page! -->
+    <%
+      var tag_str = "";
+      var tag_list_holder = [];
+      if (page.tags && page.tags.length) {
+        var tag_quantity = page.tags.length;
+        for (var j = 0; (j < tag_quantity); j++) {
+          var current_tag = ((page.tags.data)[j]).name;
+          tag_list_holder.push(current_tag);
+          tag_str += ("#" + current_tag + " ");
+        }
+      }
+    %>
+    <title><%- page.title %> - <%- page.author %> - Smoke-Indica.com - <%- tag_str %></title>
+    <meta name="description" content="<%- page.author %>'s article on <%- page.title %>. Topics: <%- tag_str %>">
+    <% var main_keywords = tag_list_holder.join(","); %>
+    <meta name="keywords" content="<%- main_keywords %>"/>
+
+    <link rel="author" href="https://smoke-indica.com/<%- page.title %>.html"/>
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="<%- page.title %> - <%- page.author %> - Smoke-Indica.com"/>
+
+    <meta name="twitter:title" content="<%- page.title %> - <%- page.author %> - Smoke-Indica.com">
+    <meta name="twitter:description" content="<%- page.author %>'s article on <%- page.title %>. Topics: <%- tag_str %>">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <% if ((page.hasOwnProperty('images')) && ((page.images).length > 0)) { %>
+      <meta name="twitter:image" content="<%- (page.images)[0] %>">
+      <meta name="og:image" content="<%- (page.images)[0] %>"/>
+      <link href="/js/wa-mediabox.min.css" rel="stylesheet">
+    <% } %>
+  <% } else if ((page.hasOwnProperty('archive')) && (page.archive == true)) { %>
+    <!-- Archive page -->
+    <title>Smoke-Indica.com archive - an overview of all articles sorted by most recent publish date</title>
+    <meta name="description" content="A condensed overview of all recent articles on Smoke-Indica.com">
+    <meta name="keywords" content="overview,history,archive,library,recent,summary">
+  <% } else if (page.hasOwnProperty('tag')) { %>
+    <!-- Tags page -->
+    <title><%- page.tag %> tagged posts on Smoke-Indica.com</title>
+    <meta name="description" content="An overview page for articles which have have the tag: <%- page.tag %>">
+    <meta name="keywords" content="collage,gallery,<%- page.tag %>,category,tag,group,posts,articles">
+  <% } else { %>
+    <% if (page.current < 2) { %>
+      <title>Smoke Indica - A curation trail of the highest quality decentralized cannabis content</title>
+      <meta property="og:title" content="Smoke Indica - A curation trail of the highest quality decentralized cannabis content"/>
+      <meta name="description" content="Smoke Indica is SMOKE.IO curation trail comprised of high quality Cannabis articles on a variety of topics. New content is generated every day. ">
+    <% } else { %>
+      <title>Smoke Indica - A curation trail of the highest quality decentralized cannabis content - Page <%- page.current %> of <%- page.total %></title>
+      <meta name="description" content="Smoke Indica is SMOKE.IO curation trail comprised of high quality Cannabis articles on a variety of topics. New content is generated every day. Page <%- page.current %> of <%- page.total %>">
+    <% } %>
+    <meta property="og:type" content="website" />
+    <meta name="keywords" content="grow,smoking,nugporn,life,review,canna-curate,strains,cryptosmokers,smoke,tipsytrippinrednecks,cannabis,contest,offtopic,indica,weed,dabs,shannonville,guide,autoflower,marijuana,edibles,cannabiscuration,foodporn,munchies,hybrid,smokenetwork,indoor,growdiary,news,mephistogenetics,peacemaker420,mrsmileyface,mephhead,seedgermination,germination,blackmarket,naturalmedicine,sativa,seed,canada,uptownextracts,fourtwenty,berner,curation,bluerhino,nugshots,justcannabis,modification,witness-update,statistics,maximizeyouryield,legalize,maryland,mmj,zzzbomb,ultimate,prize,ultimatecontest,learning,scrog,kushreview,outdoor,budreview,strain,homegrown,scoring,reuping,lemondrop,outdoors,garden,relaxation,autofeminizedstrain,cannabisstrain,art,growart"/>
+  <% } %>
+
+
+    <!-- PubSubHubbub Discovery -->
+    <link rel="hub"  href="https://smoke-indica.superfeedr.com/" xmlns="http://www.w3.org/2005/Atom" />
+    <link rel="self" href="<%= url_for(theme.rss) %>" xmlns="http://www.w3.org/2005/Atom" />
+    <!-- End Of PubSubHubbub Discovery -->
+
+  <%- open_graph({twitter_id: theme.twitter}) %>
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+  <% if (theme.rss){ %>
+    <link rel="alternate" href="<%= url_for(theme.rss) %>" title="<%= config.title %>" type="application/atom+xml">
+  <% } %>
+  <% if (theme.favicon){ %>
+    <link rel="icon" href="<%- theme.favicon %>">
+  <% } %>
+  <% if (config.highlight.enable){ %>
+    <link href="/js/google_font.css" rel="stylesheet" type="text/css" media="none" onload="if(media!='all')media='all'">
+  <% } %>
+
+  <meta name="twitter:site" content="@smoke_indica">
+  <meta property="og:site_name" content="Smoke Indica" />
+
+  <link rel="stylesheet" type="text/css" href="/js/bootstrap.min.css" media="none" onload="if(media!='all')media='all'">
+
+  <meta name="p:domain_verify" content="8ae4c013a2b685fe267e67e223ecdbc5"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
+  <link rel="manifest" href="/favicons/site.webmanifest">
+  <link rel="mask-icon" href="/favicons/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="shortcut icon" href="/favicons/favicon.ico">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-config" content="/favicons/browserconfig.xml">
+  <meta name="theme-color" content="#ffffff">
+  <style>
+    :focus {
+      border: 5px dotted green;
+    }
+  </style>
+  <% if (is_post() && config.generator_amp){ %>
+  <link rel="amphtml" href="<%= config.url %><%= config.root %><%= page.path %>/amp/index.html">
+<% } %>
+  <%- css('css/style') %>
+</head>

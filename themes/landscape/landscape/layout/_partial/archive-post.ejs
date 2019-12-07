@@ -1,0 +1,51 @@
+<article class="archive-article archive-type-<%= post.layout %>">
+  <div class="archive-article-inner" style="box-shadow: 2px 2px 2px 2px #8DB98A;">
+    <div class="article-entry">
+    <% if ((post.hasOwnProperty('images')) && ((post.images).length > 0)) { %>
+      <% if (!(post.images)[0].includes("steemitimages")) { %>
+        <a href="<%- url_for(post.path) %>" style="color:green;">
+          <img src="//images.weserv.nl/?url=<%- (post.images)[0] %>&w=500&output=webp" style="width:100%;max-width:100%;" alt="<%= post.author %>'s post banner image">
+        </a>
+      <% } %>
+    <% } %>
+    </div>
+    <header class="archive-article-header">
+      <% try { var profile_image = custom_field('pages', post.author, 'profile_image'); } catch (err) { var profile_image = "https://smoke-indica.com/css/images/smoke_user.webp"; } %>
+      <% if ( typeof(profile_image) !== "undefined" && profile_image !== null ) { %>
+        <% if (profile_image.includes("steemitimages")) { profile_image = "https://smoke-indica.com/css/images/smoke_user.webp"; } %>
+        <% if ((profile_image == "/css/images/smoke_user.png") || (profile_image == "https://smoke-indica.com/css/images/smoke_user.webp")) { profile_image = "https://smoke-indica.com/css/images/smoke_user.webp"; } %>
+        <img style="float:left; padding:5px; height: 50px; width: 50px; object-fit: contain;" src="//images.weserv.nl/?url=<%- profile_image %>&w=50&h=50&output=webp" alt="<%- post.author %>'s profile image'" />
+      <% } %>
+      <%- partial('post/archive_title', {class_name: 'archive-article-title'}) %>
+
+      <% try { var reputation = custom_field('pages', post.author, 'reputation'); } catch (err) { var reputation = "?"; } %>
+      <h4>Author: <b>@<a href="/<%- post.author %>.html" style="color:green;"><%- post.author %></a></b> Rep: <%- reputation %> Votes: <%= post.net_votes %></h4>
+
+      <h5 style="padding-top:5px;">Tags:
+      <% var tag_str = ""; %>
+      <% if (post.tags && post.tags.length) { %>
+        <% var tag_quantity = post.tags.length; %>
+        <% for (var j = 0; (j < tag_quantity); j++) { %>
+          <% var current_tag = ((post.tags.data)[j]).name; %>
+          <% tag_str += ("#" + current_tag + " "); %>
+          <a href="/tags/<%= current_tag %>/"><%= current_tag %></a>
+          <% if (j < (tag_quantity - 1)) { %>
+            ,
+          <% } %>
+        <% } %>
+      <% } %>
+      </h5>
+
+      <%
+        const wordsPerMinute = 200;
+        let read_result;
+        let textLength = post.content.split(" ").length; // Split by words
+        if (textLength > 0) {
+          let value = Math.ceil(textLength / wordsPerMinute);
+          read_result = `${value} min read.`;
+        }
+      %>
+      <h6 style="padding-bottom:10px; padding-top:5px;"><span class="float-left">⏱ <%- read_result %></span><span class="float-right"><a href="<%- url_for(post.path) %>"><button type="button" class="btn btn-success">Read Post</button></a></span> <br/>Created: <time datetime="<%= date_xml(post.date) %>" itemprop="datePublished"><%= date(post.date, null) %></time></h6>
+    </header>
+  </div>
+</article>
